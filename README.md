@@ -163,6 +163,19 @@ emoji characters are here to help you.
 - **Alfred the Alert** 🚨 will occasionally show up in the test failures with
   potential explanations for why the tests are failing.
 
+## Personal Notes
+
+**useReducer** : When to use: when one element of your state relies on the value
+of another element of your state in order to update
+
+**useReducer vs useState**:
+
+- When it's just an independent element of state you're managing: useState
+- When one element of your state relies on the value of another element of your
+  state in order to update: useReducer
+- In general, its suggested to start with useState, and moving to useReducer
+  when you notice elements of state need to change together.
+
 ## Contributors
 
 Thanks goes to these wonderful people
@@ -224,6 +237,7 @@ Thanks goes to these wonderful people
 
 <!-- markdownlint-enable -->
 <!-- prettier-ignore-end -->
+
 <!-- ALL-CONTRIBUTORS-LIST:END -->
 
 This project follows the
