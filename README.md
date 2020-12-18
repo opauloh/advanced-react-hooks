@@ -175,6 +175,57 @@ of another element of your state in order to update
   state in order to update: useReducer
 - In general, its suggested to start with useState, and moving to useReducer
   when you notice elements of state need to change together.
+- Simulating this.setState with reducer, supporting setState with both function
+  and object
+
+```js
+const countReducer = (state, action) => ({
+  ...state,
+  ...(typeof action === 'function' ? action(state) : action),
+})
+
+// ...
+
+const increment = () =>
+    setState(currentState => ({count: currentState.count + step}))
+  return <button onClick={increment}>{count}</button>
+}
+```
+
+- useReducer with TS
+  (https://levelup.gitconnected.com/usetypescript-a-complete-guide-to-react-hooks-and-typescript-db1858d1fb9c):
+
+```js
+type Dispatch<A> = (value: A) => void
+type Reducer<S, A> = (prevState: S, action: A) => S
+type ReducerState<R extends Reducer<any, any>> = R extends Reducer<infer S, any>
+  ? S
+  : never
+type ReducerAction<R extends Reducer<any, any>> = R extends Reducer<
+  any,
+  infer A
+>
+  ? A
+  : never
+
+function useReducer<R extends Reducer<any, any>, I>(
+  reducer: R,
+  initializerArg: I & ReducerState<R>,
+  initializer: (arg: I & ReducerState<R>) => ReducerState<R>,
+): [ReducerState<R>, Dispatch<ReducerAction<R>>]
+
+function useReducer<R extends Reducer<any, any>, I>(
+  reducer: R,
+  initializerArg: I,
+  initializer: (arg: I) => ReducerState<R>,
+): [ReducerState<R>, Dispatch<ReducerAction<R>>]
+
+function useReducer<R extends Reducer<any, any>>(
+  reducer: R,
+  initialState: ReducerState<R>,
+  initializer?: undefined,
+): [ReducerState<R>, Dispatch<ReducerAction<R>>]
+```
 
 ## Contributors
 
