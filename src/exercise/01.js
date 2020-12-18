@@ -8,10 +8,14 @@ import * as React from 'react'
 //   ...(typeof action === 'function' ? action(state) : action),
 // })
 const countReducer = (state, action) => {
-  if (action.type === 'INCREMENT')
-    return {...state, count: state.count + action.step}
-
-  return state
+  switch (action.type) {
+    case 'INCREMENT': {
+      return {...state, count: state.count + action.step}
+    }
+    default: {
+      throw new Error(`Unsupported action type: ${action.type}`)
+    }
+  }
 }
 
 function Counter({initialCount = 0, step = 1}) {
