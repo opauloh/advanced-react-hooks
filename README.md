@@ -227,6 +227,31 @@ function useReducer<R extends Reducer<any, any>>(
 ): [ReducerState<R>, Dispatch<ReducerAction<R>>]
 ```
 
+- **Custom Hooks**: when creating custom hooks with high reuse, often we will
+  have to handle async callbacks (i.e data fetching), below is some example of
+  how to do it (so people who are using the hook will have to return a promise
+  if they want the async thing to happen or just return nothing if they don't.
+  We'll get that promise. If they return early from that async callback, or
+  explicitly return null or undefined, then we'll exit early at that point)
+
+```js
+React.useEffect(() => {
+  // 💰 this first early-exit bit is a little tricky, so let me give you a hint:
+  const promise = asyncCallback()
+  if (!promise) {
+    return
+  }
+  promise.then(
+    data => {
+      dispatch({type: 'resolved', data})
+    },
+    error => {
+      dispatch({type: 'rejected', error})
+    },
+  )
+}, dependencies) //dependencies comes from props in this case
+```
+
 ## Contributors
 
 Thanks goes to these wonderful people
