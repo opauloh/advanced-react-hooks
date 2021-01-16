@@ -252,7 +252,8 @@ React.useEffect(() => {
 }, dependencies) //dependencies comes from props in this case
 ```
 
-- it would be much easier if we could just put the function itself in the dependency list:
+- it would be much easier if we could just put the function itself in the
+  dependency list:
 
 ```js
 const updateLocalStorage = () => window.localStorage.setItem('count', count)
@@ -260,7 +261,13 @@ React.useEffect(() => {
   updateLocalStorage()
 }, [updateLocalStorage]) // <-- function as a dependency
 ```
-- The problem with that though is because updateLocalStorage is defined inside the component function body, it’s re-initialized every render, which means it’s brand new every render, which means it changes every render, which means, you guessed it, our callback will be called every render! This is the problem useCallback solves. And here’s how you solve it:
+
+- The problem with that though is because updateLocalStorage is defined inside
+  the component function body, it’s re-initialized every render, which means
+  it’s brand new every render, which means it changes every render, which means,
+  you guessed it, our callback will be called every render! This is the problem
+  useCallback solves. And here’s how you solve it:
+
 ```js
 const updateLocalStorage = React.useCallback(
   () => window.localStorage.setItem('count', count),
@@ -271,6 +278,12 @@ React.useEffect(() => {
 }, [updateLocalStorage])
 ```
 
+- The first argument to **useCallback** is the callback you want called, the
+  second argument is an array of dependencies which is similar to useEffect.
+  When one of the dependencies changes between renders, the callback you passed
+  in the first argument will be the one returned from useCallback. If they do
+  not change, then you’ll get the callback which was returned the previous time
+  (so the callback remains the same between renders).
 
 ## Contributors
 
