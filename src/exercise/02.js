@@ -27,35 +27,92 @@ function asyncReducer(state, action) {
   }
 }
 
-function useAsync(asyncCallback, initialState) {
-  const [state, dispatch] = React.useReducer(asyncReducer, {
+// function useAsync(asyncCallback, initialState) {
+//   const [state, dispatch] = React.useReducer(asyncReducer, {
+//     status: 'idle',
+//     data: null,
+//     error: null,
+//     ...initialState,
+//   })
+
+//   React.useEffect(() => {
+//     const promise = asyncCallback()
+//     if (!promise) {
+//       return
+//     }
+//     dispatch({type: 'pending'})
+
+//     promise.then(
+//       data => {
+//         dispatch({type: 'resolved', data})
+//       },
+//       error => {
+//         dispatch({type: 'rejected', error})
+//       },
+//     )
+//   }, [asyncCallback])
+
+//   return state
+// }
+
+function useSafeDispatch(dispatch) {
+  const mountedRef = React.useRef(false)
+  // const canRequest = React.useRef(true)
+
+  React.useLayoutEffect(() => {
+    //useLayoutEffect - to not wait for browser painting
+    mountedRef.current = true
+    return () => (mountedRef.current = false)
+  }, [])
+
+  return React.useCallback(
+    (...args) => {
+      if (mountedRef.current) {
+        dispatch(...args)
+      }
+    },
+    [dispatch],
+  )
+}
+
+function useAsync(initialState) {
+  // const [state, dispatch] = React.useReducer(asyncReducer, {
+  const [state, unsafeDispatch] = React.useReducer(asyncReducer, {
     status: 'idle',
     data: null,
     error: null,
     ...initialState,
   })
 
-  React.useEffect(() => {
-    const promise = asyncCallback()
-    if (!promise) {
-      return
-    }
-    dispatch({type: 'pending'})
+  const dispatch = useSafeDispatch(unsafeDispatch)
+  // const canRequest = React.useRef(true)
 
-    promise.then(
-      data => {
-        dispatch({type: 'resolved', data})
-      },
-      error => {
-        dispatch({type: 'rejected', error})
-      },
-    )
-  }, [asyncCallback])
+  // React.useEffect(() => {
+  //   return () => (canRequest.current = false)
+  // }, [])
 
-  return state
+  const run = React.useCallback(
+    promise => {
+      dispatch({type: 'pending'})
+      promise.then(
+        data => {
+          // if (canRequest.current) dispatch({type: 'resolved', data})
+          dispatch({type: 'resolved', data})
+        },
+        error => {
+          // if (canRequest.current) dispatch({type: 'rejected', error})
+          dispatch({type: 'rejected', error})
+        },
+      )
+    },
+    [dispatch],
+  )
+
+  return {...state, run}
 }
 
 function PokemonInfo({pokemonName}) {
+  /*
   const asyncCallback = React.useCallback(() => {
     if (!pokemonName) {
       return
@@ -68,6 +125,17 @@ function PokemonInfo({pokemonName}) {
   })
 
   const {data, status, error} = state
+*/
+  const {data, status, error, run} = useAsync({
+    status: pokemonName ? 'pending' : 'idle',
+  })
+
+  React.useEffect(() => {
+    if (!pokemonName) {
+      return
+    }
+    run(fetchPokemon(pokemonName))
+  }, [pokemonName, run])
 
   if (status === 'idle' || !pokemonName) {
     return 'Submit a pokemon'
