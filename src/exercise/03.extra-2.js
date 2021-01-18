@@ -16,8 +16,16 @@ import {
 import {useAsync} from '../utils'
 
 // 🐨 Create a PokemonCacheContext
-
+const PokemonCacheContext = React.createContext()
 // 🐨 create a PokemonCacheProvider function
+const PokemonCacheProvider = ({children}) => {
+  const value = React.useReducer(pokemonCacheReducer, {})
+  return (
+    <PokemonCacheContext.Provider value={value}>
+      {children}
+    </PokemonCacheContext.Provider>
+  )
+}
 // 🐨 useReducer with pokemonCacheReducer in your PokemonCacheProvider
 // 💰 you can grab the one that's in PokemonInfo
 // 🐨 return your context provider with the value assigned to what you get back from useReducer
@@ -35,11 +43,19 @@ function pokemonCacheReducer(state, action) {
   }
 }
 
+const usePokemonCache = () => {
+  const value = React.useContext(PokemonCacheContext)
+  if (!value) {
+    throw Error('usePokemonCache must be called within a PokemonCacheProvider')
+  }
+  return value
+}
+
 function PokemonInfo({pokemonName}) {
   // 💣 remove the useReducer here (or move it up to your PokemonCacheProvider)
-  const [cache, dispatch] = React.useReducer(pokemonCacheReducer, {})
+  // const [cache, dispatch] = React.useReducer(pokemonCacheReducer, {})
   // 🐨 get the cache and dispatch from useContext with PokemonCacheContext
-
+  const [cache, dispatch] = usePokemonCache()
   const {data: pokemon, status, error, run, setData} = useAsync()
 
   React.useEffect(() => {
@@ -70,7 +86,7 @@ function PokemonInfo({pokemonName}) {
 
 function PreviousPokemon({onSelect}) {
   // 🐨 get the cache from useContext with PokemonCacheContext
-  const cache = {}
+  const [cache] = usePokemonCache()
   return (
     <div>
       Previous Pokemon
@@ -120,11 +136,13 @@ function App() {
   }
 
   return (
-    <div className="pokemon-info-app">
-      <PokemonForm pokemonName={pokemonName} onSubmit={handleSubmit} />
-      <hr />
-      <PokemonSection onSelect={handleSelect} pokemonName={pokemonName} />
-    </div>
+    <PokemonCacheProvider>
+      <div className="pokemon-info-app">
+        <PokemonForm pokemonName={pokemonName} onSubmit={handleSubmit} />
+        <hr />
+        <PokemonSection onSelect={handleSelect} pokemonName={pokemonName} />
+      </div>
+    </PokemonCacheProvider>
   )
 }
 
