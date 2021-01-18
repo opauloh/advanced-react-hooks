@@ -291,6 +291,19 @@ React.useEffect(() => {
   avoid issues with prop drilling as well. Learn more about this from
   [Michael Jackson on Twitter](https://twitter.com/mjackson/status/1195495535483817984)
 
+- It's a good practice to create a consumer hook, instead of using the
+  useContext hook directly while gaining the ability to provide custom errors:
+
+```js
+const usePokemonCache = () => {
+  const value = React.useContext(PokemonCacheContext)
+  if (!value) {
+    throw Error('usePokemonCache must be called within a PokemonCacheProvider')
+  }
+  return value
+}
+```
+
 ## Contributors
 
 Thanks goes to these wonderful people
