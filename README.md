@@ -285,6 +285,12 @@ React.useEffect(() => {
   not change, then you’ll get the callback which was returned the previous time
   (so the callback remains the same between renders).
 
+- Context = 🦉 Keep in mind that while context makes sharing state easy, it’s
+  not the only solution to Prop Drilling pains and it’s not necessarily the best
+  solution either. React’s composition model is powerful and can be used to
+  avoid issues with prop drilling as well. Learn more about this from
+  [Michael Jackson on Twitter](https://twitter.com/mjackson/status/1195495535483817984)
+
 ## Contributors
 
 Thanks goes to these wonderful people
