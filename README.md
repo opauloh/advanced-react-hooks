@@ -353,6 +353,44 @@ React.useImperativeHandle(ref, () => {
 })
 ```
 
+- **useDebugValue** - When you start writing custom hooks, it can be useful to
+  give them a special label. This is especially useful to differentiate
+  different usages of the same hook in a given component.
+
+```js
+function useCount({initialCount = 0, step = 1} = {}) {
+  React.useDebugValue({initialCount, step})
+  const [count, setCount] = React.useState(0)
+  const increment = () => setCount(c => c + 1)
+  return [count, increment]
+}
+```
+
+Another example:
+
+```js
+React.useDebugValue(`\`${query}\` => ${state}`)
+```
+
+- useDebugValue also takes a second argument which is an optional formatter
+  function, allowing you to do stuff like this if you like:
+
+```js
+const formatCountDebugValue = ({initialCount, step}) =>
+  `init: ${initialCount}; step: ${step}`
+
+function useCount({initialCount = 0, step = 1} = {}) {
+  React.useDebugValue({initialCount, step}, formatCountDebugValue)
+  const [count, setCount] = React.useState(0)
+  const increment = () => setCount(c => c + 1)
+  return [count, increment]
+}
+```
+
+- This is only really useful for situations where computing the debug value is
+  computationally expensive (and therefore you only want it calculated when the
+  DevTools are open and not when your users are using the app).
+
 ## Contributors
 
 Thanks goes to these wonderful people
