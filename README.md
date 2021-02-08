@@ -355,7 +355,8 @@ React.useImperativeHandle(ref, () => {
 
 - **useDebugValue** - When you start writing custom hooks, it can be useful to
   give them a special label. This is especially useful to differentiate
-  different usages of the same hook in a given component.
+  different usages of the same hook in a given component. (Note: only works on
+  custom hooks)
 
 ```js
 function useCount({initialCount = 0, step = 1} = {}) {
