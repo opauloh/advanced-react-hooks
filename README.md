@@ -304,9 +304,13 @@ const usePokemonCache = () => {
 }
 ```
 
-- _useLayoutEffect_ - Here’s the simple rule for when you should use
+- **useLayoutEffect** runs before browser paint screen, opposite to it's
+  simbling useEffect, Here’s the simple rule for when you should use
   useLayoutEffect: If you are making observable changes to the DOM, then it
   should happen in useLayoutEffect, otherwise useEffect.
+- Also, when you need your effect to run before all others effect, check the
+  diagram:
+  ![](https://raw.githubusercontent.com/donavon/hook-flow/master/hook-flow.png)
 - One other situation you might want to use useLayoutEffect instead of useEffect
   is if you're updating a value (like a ref) and you want to make sure it's
   up-to-date before any other code runs. For example:
