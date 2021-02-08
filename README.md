@@ -306,8 +306,9 @@ const usePokemonCache = () => {
 
 - **useLayoutEffect** runs before browser paint screen, opposite to it's
   simbling useEffect, Here’s the simple rule for when you should use
-  useLayoutEffect: If you are making observable changes to the DOM, then it
-  should happen in useLayoutEffect, otherwise useEffect.
+  useLayoutEffect: If you are making observable changes to the DOM (that will
+  require the browser to paint what you've made), then it should happen in
+  useLayoutEffect, otherwise useEffect.
 - Also, when you need your effect to run before all others effect, check the
   diagram:
   ![](https://raw.githubusercontent.com/donavon/hook-flow/master/hook-flow.png)
@@ -323,6 +324,32 @@ React.useEffect(() => {
 // then, later in another hook or something
 React.useLayoutEffect(() => {
   console.log(ref.value) // <-- this logs an old value because this runs first!
+})
+```
+
+- **useImperativeHandle** allows us to expose imperative methods to developers
+  who pass a ref prop to our component which can be useful when you have
+  something that needs to happen and is hard to deal with declaratively.
+
+implementation would be if we are doing something like that:
+
+```js
+React.useLayoutEffect(() => {
+  ref.current = {
+    scrollToTop,
+    scrollToBottom,
+  }
+}, [])
+```
+
+instead with useImperativeHandle we can do that:
+
+```js
+React.useImperativeHandle(ref, () => {
+  return {
+    scrollToTop,
+    scrollToBottom,
+  }
 })
 ```
 
