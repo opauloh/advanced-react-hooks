@@ -304,6 +304,24 @@ const usePokemonCache = () => {
 }
 ```
 
+- _useLayoutEffect_ - Here’s the simple rule for when you should use
+  useLayoutEffect: If you are making observable changes to the DOM, then it
+  should happen in useLayoutEffect, otherwise useEffect.
+- One other situation you might want to use useLayoutEffect instead of useEffect
+  is if you're updating a value (like a ref) and you want to make sure it's
+  up-to-date before any other code runs. For example:
+
+```js
+const ref = React.useRef()
+React.useEffect(() => {
+  ref.value = 'some value'
+})
+// then, later in another hook or something
+React.useLayoutEffect(() => {
+  console.log(ref.value) // <-- this logs an old value because this runs first!
+})
+```
+
 ## Contributors
 
 Thanks goes to these wonderful people
